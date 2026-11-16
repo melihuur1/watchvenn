@@ -49,7 +49,8 @@ export function diffRoom(prev: PublicRoom, next: PublicRoom, meId: string): Room
       events.push({
         kind: 'results',
         early: (next.results?.excludedCount ?? 0) > 0,
-        missedMyVote: Boolean(me?.isVoter && !me.hasVoted),
+        // Only an early end can skip a present voter; the host who ended it already knows.
+        missedMyVote: Boolean(me?.isVoter && !me.hasVoted && !amHost),
       });
     } else if (prev.phase === 'results' && next.phase === 'lobby') {
       events.push({ kind: 'new-round', byMe: amHost });

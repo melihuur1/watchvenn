@@ -39,27 +39,27 @@ export function RoomHeader({ room, meId, ready, connection }: { room: PublicRoom
   return (
     <header className="sticky top-0 z-30 border-b border-white/[0.05] bg-ink-950/70 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4 sm:gap-4 sm:px-6">
-      <a href="/" onClick={followLink} className="flex shrink-0 items-center gap-2 rounded-xl" aria-label="WatchVenn ana sayfa">
-        <LogoMark className="size-8" />
-        <span className="hidden text-lg font-extrabold tracking-tight sm:inline">
-          Watch<span className="text-gradient">Venn</span>
-        </span>
-      </a>
+        <a href="/" onClick={followLink} className="flex shrink-0 items-center gap-2 rounded-xl" aria-label="WatchVenn ana sayfa">
+          <LogoMark className="size-8" />
+          <span className="hidden text-lg font-extrabold tracking-tight sm:inline">
+            Watch<span className="text-gradient">Venn</span>
+          </span>
+        </a>
 
-      <PhaseSteps phase={room.phase} />
+        <PhaseSteps phase={room.phase} />
 
-      <button
-        type="button"
-        onClick={copyLink}
-        className="hidden h-9 items-center gap-2 rounded-xl bg-white/[0.05] px-3 font-mono text-sm font-bold tracking-[0.18em] text-stone-200 ring-1 ring-white/10 transition hover:bg-white/10 sm:inline-flex"
-        aria-label={`Oda kodu ${room.code}. Davet linkini kopyala`}
-      >
-        {room.code}
-        <Icon name="copy" className="size-4 text-stone-400" />
-      </button>
-      <Button variant="ghost" size="sm" icon="logout" onClick={() => setConfirming(true)} disabled={!ready} aria-label="Odadan çık" className="px-2.5">
-        <span className="hidden md:inline">Çık</span>
-      </Button>
+        <button
+          type="button"
+          onClick={copyLink}
+          className="hidden h-9 items-center gap-2 rounded-xl bg-white/[0.05] px-3 font-mono text-sm font-bold tracking-[0.18em] text-stone-200 ring-1 ring-white/10 transition hover:bg-white/10 sm:inline-flex"
+          aria-label={`Oda kodu ${room.code}. Davet linkini kopyala`}
+        >
+          {room.code}
+          <Icon name="copy" className="size-4 text-stone-400" />
+        </button>
+        <Button variant="ghost" size="sm" icon="logout" onClick={() => setConfirming(true)} disabled={!ready} aria-label="Odadan çık" className="px-2.5">
+          <span className="hidden md:inline">Çık</span>
+        </Button>
       </div>
 
       <ConfirmDialog

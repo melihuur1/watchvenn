@@ -29,7 +29,11 @@ if (existsSync(clientDir)) {
 }
 
 const httpServer = createServer(app);
-const io: IoServer = new Server(httpServer, { maxHttpBufferSize: LIMITS.maxMessageBytes });
+const io: IoServer = new Server(httpServer, {
+  maxHttpBufferSize: LIMITS.maxMessageBytes,
+  pingInterval: TIMINGS.heartbeatIntervalMs,
+  pingTimeout: TIMINGS.heartbeatTimeoutMs,
+});
 
 // All state lives in memory: a restart or redeploy deletes every room (an accepted MVP trade-off).
 const realtime = attachRealtime(io, createStore());

@@ -67,6 +67,8 @@ describe('diffRoom', () => {
 
     const ended = room({ ...voting, phase: 'results', results: results(1) });
     expect(diffRoom(voting, ended, 'me')).toEqual([{ kind: 'results', early: true, missedMyVote: true }]);
+    // The host who ended it early is not told they missed it.
+    expect(diffRoom(voting, ended, 'host')).toEqual([{ kind: 'results', early: true, missedMyVote: false }]);
 
     expect(diffRoom(ended, room({ round: 2 }), 'me')).toEqual([{ kind: 'new-round', byMe: false }]);
   });

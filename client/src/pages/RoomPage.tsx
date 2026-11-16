@@ -6,6 +6,7 @@ import { LobbyView } from '../components/LobbyView';
 import { ParticipantList } from '../components/ParticipantList';
 import { RoomHeader } from '../components/RoomHeader';
 import { RoomNotifier } from '../components/RoomNotifier';
+import { VotingView } from '../components/VotingView';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useRoom } from '../hooks/useRoom';
 import { useRoomActions, type RoomViewProps } from '../hooks/useRoomActions';
@@ -59,7 +60,9 @@ function RoomShell({ room, meId, ready, connection }: { room: PublicRoom; meId: 
     <div className="flex min-h-dvh flex-col">
       <RoomHeader room={room} meId={meId} ready={ready} connection={connection} />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-5 pb-32 sm:px-6">
-        {room.phase === 'lobby' ? <LobbyView {...props} /> : <PhasePlaceholder {...props} />}
+        {room.phase === 'lobby' && <LobbyView {...props} />}
+        {room.phase === 'voting' && <VotingView {...props} />}
+        {room.phase === 'results' && <PhasePlaceholder {...props} />}
       </main>
       <RoomNotifier room={room} meId={meId} />
     </div>

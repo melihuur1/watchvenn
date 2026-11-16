@@ -26,6 +26,12 @@ export const TIMINGS = {
   roomMaxAgeMs: 6 * HOUR,
   /** How often the server runs `sweep()`. */
   sweepIntervalMs: 10 * SECOND,
+  /**
+   * Socket.IO heartbeat. A client whose network silently vanished (no TCP close) is noticed
+   * within interval + timeout, instead of the library default of up to 45 s.
+   */
+  heartbeatIntervalMs: 10 * SECOND,
+  heartbeatTimeoutMs: 10 * SECOND,
 } as const;
 
 /** No 0/O, 1/I/L: codes are easy to read aloud and type. 31^6 ≈ 887 million codes. */
