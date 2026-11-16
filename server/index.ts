@@ -3,6 +3,9 @@ import { createServer } from 'node:http';
 import path from 'node:path';
 import express from 'express';
 import { Server } from 'socket.io';
+import { LIMITS, TIMINGS } from '../shared/constants.js';
+import { createStore } from './rooms.js';
+import { attachRealtime, type IoServer } from './socket.js';
 
 const PORT = Number(process.env.PORT ?? 3001);
 
@@ -26,12 +29,17 @@ if (existsSync(clientDir)) {
 }
 
 const httpServer = createServer(app);
-const io = new Server(httpServer, { maxHttpBufferSize: 16 * 1024 });
+const io: IoServer = new Server(httpServer, { maxHttpBufferSize: LIMITS.maxMessageBytes });
 
-io.on('connection', (socket) => {
-  console.log(`socket connected: ${socket.id}`);
-});
+// All state lives in memory: a restart or redeploy deletes every room (an accepted MVP trade-off).
+const realtime = attachRealtime(io, createStore());
+setInterval(() => realtime.sweep(), TIMINGS.sweepIntervalMs).unref();
 
 httpServer.listen(PORT, () => {
   console.log(`WatchVenn server listening on http://localhost:${PORT}`);
+});
+
+// Hosts like Render send SIGTERM on redeploy: stop accepting connections and exit cleanly.
+process.once('SIGTERM', () => {
+  void io.close(() => process.exit(0));
 });
