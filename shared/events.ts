@@ -15,6 +15,8 @@ export const ERROR_CODES = [
   'NOT_A_VOTER',
   'ALREADY_VOTED',
   'INVALID_BALLOT',
+  /** Ending voting early needs at least one submitted ballot. */
+  'NO_BALLOTS',
   'TOO_FEW_CANDIDATES',
   'TOO_MANY_CANDIDATES',
   'DUPLICATE_CANDIDATE',

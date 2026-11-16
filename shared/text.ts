@@ -14,11 +14,12 @@ export function cleanText(raw: string): string {
 }
 
 /**
- * Comparison key for names and titles: case-insensitive with Turkish rules,
- * so "İSMAİL" and "ismail" match and "I" folds to "ı", not "i".
+ * Comparison key for names and titles (duplicate checks), never for display.
+ * Lowercases with Turkish rules so "İSMAİL" matches "ismail", then treats dotless "ı" as "i":
+ * caps typed on an English keyboard ("MATRIX", "ISMAIL") must still match "Matrix" and "İsmail".
  */
 export function foldKey(text: string): string {
-  return cleanText(text).toLocaleLowerCase('tr');
+  return cleanText(text).toLocaleLowerCase('tr').replaceAll('ı', 'i');
 }
 
 const ROOM_CODE_PATTERN = new RegExp(`^[${ROOM_CODE_ALPHABET}]{${ROOM_CODE_LENGTH}}$`);

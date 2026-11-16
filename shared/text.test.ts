@@ -26,8 +26,18 @@ describe('cleanText', () => {
 describe('foldKey', () => {
   it('ignores case with Turkish rules', () => {
     expect(foldKey('İSMAİL')).toBe(foldKey('ismail'));
-    expect(foldKey('IŞIK')).toBe('ışık');
-    expect(foldKey('IŞIK')).not.toBe(foldKey('isik'));
+    expect(foldKey('IŞIK')).toBe(foldKey('ışık'));
+    expect(foldKey('ŞÜKRÜ ÇAĞLAR')).toBe(foldKey('şükrü çağlar'));
+  });
+
+  it('matches caps typed without the dotted İ', () => {
+    expect(foldKey('MATRIX')).toBe(foldKey('Matrix'));
+    expect(foldKey('ISMAIL')).toBe(foldKey('İsmail'));
+  });
+
+  it('keeps other Turkish letters distinct', () => {
+    expect(foldKey('Işık')).not.toBe(foldKey('Isik'));
+    expect(foldKey('Gül')).not.toBe(foldKey('Gul'));
   });
 
   it('ignores surrounding and repeated whitespace', () => {
