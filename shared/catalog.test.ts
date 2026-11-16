@@ -36,8 +36,10 @@ describe('catalog', () => {
       expect(movie.originalTitle.trim()).not.toBe('');
       expect(movie.year).toBeGreaterThanOrEqual(1950);
       expect(movie.year).toBeLessThanOrEqual(2026);
-      expect(movie.runtime).toBeGreaterThanOrEqual(60);
-      expect(movie.runtime).toBeLessThanOrEqual(240);
+      if (movie.runtime !== undefined) {
+        expect(movie.runtime).toBeGreaterThanOrEqual(60);
+        expect(movie.runtime).toBeLessThanOrEqual(240);
+      }
       expect(movie.description.length).toBeGreaterThan(20);
       expect(movie.description.length).toBeLessThanOrEqual(120);
       expect(movie.genres.length).toBeGreaterThan(0);

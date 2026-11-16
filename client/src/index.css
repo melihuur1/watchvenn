@@ -1,18 +1,169 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI Variable Text', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+
+  /* Near-black, slightly violet surfaces. */
   --color-ink-950: #0b0a10;
-  --color-ink-900: #13111b;
-  --color-ink-800: #1c1927;
+  --color-ink-900: #121019;
+  --color-ink-850: #17141f;
+  --color-ink-800: #1d1a27;
+  --color-ink-700: #2a2638;
+  --color-ink-600: #3b3650;
+
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-fade-in: fade-in 0.35s ease-out both;
+  --animate-pop: pop 0.4s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-float: float 8s ease-in-out infinite;
+  --animate-banner: banner 0.3s ease-out 0.6s both;
+  --animate-breathe: breathe 1.6s ease-in-out infinite;
+  --animate-card-in: card-in 0.34s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-exit-left: exit-left 0.26s cubic-bezier(0.5, 0, 0.75, 0) both;
+  --animate-exit-right: exit-right 0.26s cubic-bezier(0.5, 0, 0.75, 0) both;
+  --animate-exit-down: exit-down 0.26s cubic-bezier(0.5, 0, 0.75, 0) both;
+  --animate-venn-left: venn-left 1.4s cubic-bezier(0.6, 0, 0.3, 1) infinite alternate;
+  --animate-venn-right: venn-right 1.4s cubic-bezier(0.6, 0, 0.3, 1) infinite alternate;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+    50% { transform: translateY(-10px) rotate(var(--tilt, 0deg)); }
+  }
+  /* Waits a moment, so a quick reconnect never flashes the banner. */
+  @keyframes banner {
+    from { opacity: 0; transform: translateY(-100%); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 1; }
+  }
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.96); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes exit-left {
+    to { opacity: 0; transform: translateX(-70%) rotate(-10deg); }
+  }
+  @keyframes exit-right {
+    to { opacity: 0; transform: translateX(70%) rotate(10deg); }
+  }
+  @keyframes exit-down {
+    to { opacity: 0; transform: translateY(35%) scale(0.92); }
+  }
+  @keyframes venn-left {
+    from { transform: translateX(-9px); }
+    to { transform: translateX(3px); }
+  }
+  @keyframes venn-right {
+    from { transform: translateX(9px); }
+    to { transform: translateX(-3px); }
+  }
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(95deg, var(--color-amber-300), var(--color-orange-400) 45%, var(--color-rose-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility skeleton {
+  background-image: linear-gradient(90deg, rgb(255 255 255 / 0.04) 25%, rgb(255 255 255 / 0.09) 50%, rgb(255 255 255 / 0.04) 75%);
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer base {
   html {
     color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
   }
 
   body {
     @apply min-h-dvh bg-ink-950 font-sans text-stone-100 antialiased;
+  }
+
+  /* Cinematic backdrop: warm spotlights and a whisper of film grain. Fixed, behind everything. */
+  body::before,
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::before {
+    background:
+      radial-gradient(56rem 34rem at 8% -14%, rgb(251 191 36 / 0.11), transparent 62%),
+      radial-gradient(48rem 38rem at 108% -4%, rgb(244 63 94 / 0.11), transparent 60%),
+      radial-gradient(60rem 30rem at 50% 115%, rgb(124 58 237 / 0.07), transparent 65%);
+  }
+  body::after {
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  #root {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+  }
+
+  ::selection {
+    background: rgb(251 191 36 / 0.3);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-amber-300);
+    outline-offset: 2px;
+  }
+
+  button:not(:disabled),
+  [role='button'] {
+    cursor: pointer;
+  }
+
+  dialog::backdrop {
+    background: rgb(5 4 8 / 0.72);
+    backdrop-filter: blur(6px);
+  }
+}
+
+/* Motion off: animations still "run" for a moment, so any code waiting on them keeps working. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

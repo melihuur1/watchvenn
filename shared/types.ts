@@ -37,8 +37,8 @@ export interface CatalogMovie {
   /** Original title, or the international one when the original isn't in Latin script. */
   originalTitle: string;
   year: number;
-  /** Minutes. */
-  runtime: number;
+  /** Minutes. Left out where the figure couldn't be verified: no guesses presented as facts. */
+  runtime?: number;
   genres: readonly Genre[];
   /** One spoiler-free sentence in Turkish. */
   description: string;
