@@ -1,0 +1,11 @@
+{
+  // Production server build: emits dist/server/*.js and dist/shared/*.js.
+  "extends": "./tsconfig.server.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "."
+  },
+  "include": ["server", "shared"],
+  "exclude": ["**/*.test.ts"]
+}
