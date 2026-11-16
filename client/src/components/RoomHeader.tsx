@@ -37,7 +37,8 @@ export function RoomHeader({ room, meId, ready, connection }: { room: PublicRoom
   }
 
   return (
-    <header className="sticky top-0 z-30 -mx-4 flex h-16 items-center gap-2 bg-ink-950/70 px-4 backdrop-blur-xl sm:-mx-6 sm:gap-4 sm:px-6">
+    <header className="sticky top-0 z-30 border-b border-white/[0.05] bg-ink-950/70 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4 sm:gap-4 sm:px-6">
       <a href="/" onClick={followLink} className="flex shrink-0 items-center gap-2 rounded-xl" aria-label="WatchVenn ana sayfa">
         <LogoMark className="size-8" />
         <span className="hidden text-lg font-extrabold tracking-tight sm:inline">
@@ -59,6 +60,7 @@ export function RoomHeader({ room, meId, ready, connection }: { room: PublicRoom
       <Button variant="ghost" size="sm" icon="logout" onClick={() => setConfirming(true)} disabled={!ready} aria-label="Odadan çık" className="px-2.5">
         <span className="hidden md:inline">Çık</span>
       </Button>
+      </div>
 
       <ConfirmDialog
         open={confirming}

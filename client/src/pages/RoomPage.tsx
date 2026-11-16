@@ -2,12 +2,13 @@ import { useEffect } from 'react';
 import { parseRoomCode } from '@shared/text';
 import type { Phase, PublicRoom } from '@shared/types';
 import { ConnectionBanner } from '../components/ConnectionBanner';
+import { LobbyView } from '../components/LobbyView';
 import { ParticipantList } from '../components/ParticipantList';
 import { RoomHeader } from '../components/RoomHeader';
 import { RoomNotifier } from '../components/RoomNotifier';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useRoom } from '../hooks/useRoom';
-import { useRoomActions, type RunAction } from '../hooks/useRoomActions';
+import { useRoomActions, type RoomViewProps } from '../hooks/useRoomActions';
 import type { RoomConnection } from '../lib/roomConnection';
 import { navigate } from '../lib/router';
 import { InvitePage } from './InvitePage';
@@ -47,34 +48,25 @@ function RoomScreen({ code }: { code: string }) {
   );
 }
 
-/** What every phase view gets. `ready` is false while reconnecting: controls must be disabled. */
-export interface RoomViewProps {
-  room: PublicRoom;
-  meId: string;
-  isHost: boolean;
-  ready: boolean;
-  run: RunAction;
-}
-
 const PHASE_TITLES: Record<Phase, string> = { lobby: 'Lobi', voting: 'Oylama', results: 'Sonuçlar' };
 
 function RoomShell({ room, meId, ready, connection }: { room: PublicRoom; meId: string; ready: boolean; connection: RoomConnection }) {
   const run = useRoomActions(connection);
   useDocumentTitle(PHASE_TITLES[room.phase]);
-  const props: RoomViewProps = { room, meId, isHost: room.hostId === meId, ready, run };
+  const props: RoomViewProps = { room, meId, isHost: room.hostId === meId, ready, run, connection };
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 sm:px-6">
+    <div className="flex min-h-dvh flex-col">
       <RoomHeader room={room} meId={meId} ready={ready} connection={connection} />
-      <main className="flex-1 pt-4 pb-32 lg:pb-16">
-        <PhasePlaceholder {...props} />
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-5 pb-32 sm:px-6">
+        {room.phase === 'lobby' ? <LobbyView {...props} /> : <PhasePlaceholder {...props} />}
       </main>
       <RoomNotifier room={room} meId={meId} />
     </div>
   );
 }
 
-/** Phase 4: the live participant list; the lobby, voting and results views follow. */
+/** Voting and results views follow in the next phases. */
 function PhasePlaceholder({ room, meId }: RoomViewProps) {
   return (
     <section className="mx-auto max-w-md rounded-3xl bg-white/[0.03] p-5 ring-1 ring-white/[0.07]">
