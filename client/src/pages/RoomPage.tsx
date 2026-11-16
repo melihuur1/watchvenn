@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { parseRoomCode } from '@shared/text';
 import type { Phase, PublicRoom } from '@shared/types';
 import { ConnectionBanner } from '../components/ConnectionBanner';
 import { LobbyView } from '../components/LobbyView';
-import { ParticipantList } from '../components/ParticipantList';
+import { ResultsView } from '../components/ResultsView';
 import { RoomHeader } from '../components/RoomHeader';
 import { RoomNotifier } from '../components/RoomNotifier';
 import { VotingView } from '../components/VotingView';
@@ -56,27 +56,24 @@ function RoomShell({ room, meId, ready, connection }: { room: PublicRoom; meId: 
   useDocumentTitle(PHASE_TITLES[room.phase]);
   const props: RoomViewProps = { room, meId, isHost: room.hostId === meId, ready, run, connection };
 
+  // Remember the phase from the previous render: results reached live from voting get the
+  // "calculating" moment; results reached by refresh or link don't.
+  const [shownPhase, setShownPhase] = useState(room.phase);
+  const [reveal, setReveal] = useState(false);
+  if (shownPhase !== room.phase) {
+    setShownPhase(room.phase);
+    setReveal(shownPhase === 'voting' && room.phase === 'results');
+  }
+
   return (
     <div className="flex min-h-dvh flex-col">
       <RoomHeader room={room} meId={meId} ready={ready} connection={connection} />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-5 pb-32 sm:px-6">
         {room.phase === 'lobby' && <LobbyView {...props} />}
         {room.phase === 'voting' && <VotingView {...props} />}
-        {room.phase === 'results' && <PhasePlaceholder {...props} />}
+        {room.phase === 'results' && <ResultsView key={room.round} {...props} reveal={reveal} />}
       </main>
       <RoomNotifier room={room} meId={meId} />
     </div>
-  );
-}
-
-/** Voting and results views follow in the next phases. */
-function PhasePlaceholder({ room, meId }: RoomViewProps) {
-  return (
-    <section className="mx-auto max-w-md rounded-3xl bg-white/[0.03] p-5 ring-1 ring-white/[0.07]">
-      <h2 className="text-sm font-bold tracking-wide text-stone-400 uppercase">Odadakiler · {room.participants.length}</h2>
-      <div className="mt-3">
-        <ParticipantList room={room} meId={meId} />
-      </div>
-    </section>
   );
 }

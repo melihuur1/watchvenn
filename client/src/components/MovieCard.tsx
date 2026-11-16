@@ -4,12 +4,15 @@ import { GENRE_LABELS } from '@shared/catalog';
 import type { Movie } from '@shared/types';
 import { movieMeta } from '../lib/format';
 
-type Size = 'deck' | 'hero' | 'tile';
+type Size = 'deck' | 'hero' | 'tile' | 'banner' | 'strip';
 
 const SIZES: Record<Size, { root: string; title: string; genres: number }> = {
   deck: { root: 'rounded-[2rem] p-6 sm:p-8', title: 'text-[2.15rem] sm:text-5xl', genres: 3 },
   hero: { root: 'rounded-[1.6rem] p-4', title: 'text-2xl', genres: 1 },
   tile: { root: 'rounded-2xl p-3', title: 'text-[17px]', genres: 1 },
+  /** Square-cornered, for the top of a results card. */
+  banner: { root: 'p-5 sm:p-7', title: 'text-[2rem] sm:text-5xl', genres: 2 },
+  strip: { root: 'p-4', title: 'text-2xl', genres: 1 },
 };
 
 export function gradient(movie: Movie, angle = 155): string {
@@ -42,7 +45,7 @@ export function MovieCard({
     >
       {/* Sheen, the brand's two circles as a watermark, and a shade so text always reads. */}
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_12%_0%,rgb(255_255_255/0.22),transparent_55%)]" />
-      <svg aria-hidden="true" viewBox="0 0 100 64" className="absolute -right-[22%] -bottom-[10%] -z-10 w-[85%] opacity-[0.17]">
+      <svg aria-hidden="true" viewBox="0 0 100 64" className="absolute -right-[22%] -bottom-[10%] -z-10 w-[85%] max-w-[26rem] opacity-[0.17]">
         <circle cx="34" cy="32" r="30" fill="none" stroke="white" strokeWidth="1.1" />
         <circle cx="66" cy="32" r="30" fill="none" stroke="white" strokeWidth="1.1" />
       </svg>
@@ -70,6 +73,9 @@ export function MovieCard({
         )}
         {size === 'deck' && movie.kind === 'catalog' && (
           <p className="mt-4 max-w-prose text-[15px] leading-snug text-white/85 sm:text-base">{movie.description}</p>
+        )}
+        {size === 'banner' && movie.kind === 'catalog' && (
+          <p className="mt-3 hidden max-w-xl text-[15px] leading-snug text-white/85 sm:block">{movie.description}</p>
         )}
       </div>
       {children}
