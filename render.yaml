@@ -1,0 +1,14 @@
+# Render Blueprint: one free web service. Express serves the built SPA and Socket.IO on one origin.
+# Free instances sleep when idle (the first visit can take up to about a minute) and all rooms live
+# in memory, so any restart, redeploy or sleep deletes them. See README → Deployment.
+services:
+  - type: web
+    name: watchvenn
+    runtime: node
+    plan: free
+    region: frankfurt
+    # devDependencies (Vite, TypeScript) are needed to build, whatever NODE_ENV is.
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true

@@ -6,6 +6,8 @@ export const ERROR_CODES = [
   'ROOM_NOT_FOUND',
   'ROOM_FULL',
   'SERVER_FULL',
+  /** Too many rooms created from one connection in the last minute. */
+  'RATE_LIMITED',
   /** The token isn't known in this room (e.g. removed from the lobby while offline). Rejoin by name. */
   'SESSION_EXPIRED',
   'NAME_TAKEN',

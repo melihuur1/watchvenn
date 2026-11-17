@@ -9,6 +9,8 @@ export const LIMITS = {
   customTitleMaxLength: 60,
   /** Socket.IO `maxHttpBufferSize`: the largest message a client may send. */
   maxMessageBytes: 16 * 1024,
+  /** Per connection, so one script can't fill the server's room cap in a loop. */
+  maxRoomCreatesPerMinute: 5,
 } as const;
 
 const SECOND = 1000;

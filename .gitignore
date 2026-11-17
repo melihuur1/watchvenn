@@ -2,9 +2,14 @@ node_modules/
 dist/
 coverage/
 .vite/
+.vitest/
 *.log
 *.tsbuildinfo
 .env
 .env.*
 .DS_Store
 Thumbs.db
+
+# Local editor and tool settings
+.idea/
+.claude/settings.local.json

@@ -2,6 +2,7 @@
 // acknowledge, then broadcast the full snapshot of every room that changed.
 // The acting participant comes from `socket.data`, which only create and join can set.
 import type { Server, Socket } from 'socket.io';
+import { LIMITS } from '../shared/constants.js';
 import type {
   AckResponse,
   ClientToServerEvents,
@@ -29,6 +30,7 @@ import {
   type Room,
   type RoomStore,
   type RuleResult,
+  type SweepReport,
 } from './rooms.js';
 import {
   parseAddCandidate,
@@ -61,8 +63,20 @@ export interface Realtime {
 }
 
 export function attachRealtime(io: IoServer, store: RoomStore, now: () => number = Date.now): Realtime {
+  /** When each connection created its recent rooms, for LIMITS.maxRoomCreatesPerMinute. */
+  const roomCreations = new WeakMap<IoSocket, number[]>();
+
   function broadcast(room: Room) {
     io.to(room.code).emit('room:state', toPublicRoom(room));
+  }
+
+  /** Records a creation attempt; false when this connection is over its per-minute allowance. */
+  function allowRoomCreation(socket: IoSocket): boolean {
+    const time = now();
+    const recent = (roomCreations.get(socket) ?? []).filter((t) => time - t < 60_000);
+    if (recent.length >= LIMITS.maxRoomCreatesPerMinute) return false;
+    roomCreations.set(socket, [...recent, time]);
+    return true;
   }
 
   function currentRoom(socket: IoSocket): Room | undefined {
@@ -113,6 +127,7 @@ export function attachRealtime(io: IoServer, store: RoomStore, now: () => number
     'room:create': (ctx) => {
       const input = parseCreateRoom(ctx.payload);
       if (!input) return fail('INVALID_INPUT');
+      if (!allowRoomCreation(ctx.socket)) return fail('RATE_LIMITED');
       exit(ctx.socket, ctx.changed);
       const result = createRoom(store, input.name, ctx.socket.id, now());
       return result.ok ? admit(ctx, result.room, result.participant) : result;
@@ -191,7 +206,14 @@ export function attachRealtime(io: IoServer, store: RoomStore, now: () => number
 
   return {
     sweep() {
-      const report = sweep(store, now());
+      let report: SweepReport;
+      try {
+        report = sweep(store, now());
+      } catch (error) {
+        // Never let the cleanup timer take the process (and every room) down.
+        console.error('Room sweep failed', error);
+        return;
+      }
       for (const code of report.changed) {
         const room = store.get(code);
         if (room) broadcast(room);

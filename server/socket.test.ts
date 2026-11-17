@@ -215,6 +215,20 @@ describe('socket integration', () => {
     });
   });
 
+  it(`limits one connection to ${LIMITS.maxRoomCreatesPerMinute} new rooms a minute`, async () => {
+    const spammer = await connect();
+    for (let i = 0; i < LIMITS.maxRoomCreatesPerMinute; i++) {
+      ok(await spammer.socket.emitWithAck('room:create', { name: `Oda ${i}` }));
+    }
+    expect(await spammer.socket.emitWithAck('room:create', { name: 'Bir tane daha' })).toEqual({ ok: false, error: 'RATE_LIMITED' });
+
+    // Another connection is unaffected, and the first one recovers after a minute.
+    const other = await connect();
+    ok(await other.socket.emitWithAck('room:create', { name: 'Başkası' }));
+    clock += 60_000;
+    ok(await spammer.socket.emitWithAck('room:create', { name: 'Sonra' }));
+  });
+
   it('rejects bad input with error codes and keeps serving', async () => {
     const stranger = await connect();
     // Untyped views of the socket, to send what a well-behaved client never would.

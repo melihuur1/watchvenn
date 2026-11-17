@@ -52,7 +52,8 @@ export function MovieCard({
       </svg>
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-3/4 bg-linear-to-t from-black/65 via-black/25 to-transparent" />
 
-      <div className="flex flex-wrap gap-1.5">
+      {/* Small tiles carry a corner button (add, remove, check): keep the chips clear of it. */}
+      <div className={`flex flex-wrap gap-1.5 ${size === 'tile' ? 'pr-8' : ''}`}>
         {movie.kind === 'custom' ? (
           <Chip>Özel ekleme</Chip>
         ) : (
@@ -103,7 +104,7 @@ export function MovieCardBack({ movie, className = '', style }: { movie: Movie; 
 
 function Chip({ children }: { children: ReactNode }) {
   return (
-    <span className="rounded-full bg-black/25 px-2.5 py-1 text-[11px] font-bold tracking-wide text-white/90 uppercase ring-1 ring-white/15 backdrop-blur-sm">
+    <span className="max-w-full min-w-0 truncate rounded-full bg-black/25 px-2.5 py-1 text-[11px] font-bold tracking-wide text-white/90 uppercase ring-1 ring-white/15 backdrop-blur-sm">
       {children}
     </span>
   );
