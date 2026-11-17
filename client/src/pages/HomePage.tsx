@@ -162,7 +162,7 @@ function HeroCards() {
         </span>
         <span>
           <span className="block text-sm font-bold">Güçlü uyum</span>
-          <span className="block text-xs text-stone-400">4 kişiden 3'ü Evet · veto yok</span>
+          <span className="block text-xs text-stone-400">3 Evet, 1 Fark etmez · veto yok</span>
         </span>
       </div>
     </div>

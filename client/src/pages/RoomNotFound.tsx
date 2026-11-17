@@ -15,8 +15,7 @@ export function RoomNotFound() {
         </svg>
         <h1 className="mt-6 text-3xl font-black tracking-tight">Bu oda artık yok</h1>
         <p className="mt-3 leading-relaxed text-stone-400">
-          Link hatalı olabilir ya da oda kapanmış olabilir. Odalar geçicidir: kimse bağlı değilken 15 dakika, en fazla da 6 saat
-          yaşar.
+          Link hatalı ya da oda kapanmış olabilir. Odalar geçicidir: kimse bağlı değilken 15 dakika, en fazla da 6 saat yaşar.
         </p>
         <Button size="lg" iconRight="arrow-right" className="mt-8" onClick={() => navigate('/')}>
           Yeni oda oluştur

@@ -22,6 +22,8 @@ export interface Transport {
   onDisconnect(listener: () => void): () => void;
   onState(listener: (room: PublicRoom) => void): () => void;
   request: Requester;
+  /** Ends this tab's presence in its room (the server sees a disconnect), keeping the app connected. */
+  release(): void;
 }
 
 const ACK_TIMEOUT_MS = 8000;
@@ -86,4 +88,12 @@ export const transport: Transport = {
     return () => socket.off('room:state', listener);
   },
   request,
+  release() {
+    // The socket stays attached to the room on the server until it disconnects, so leaving the
+    // room page in-app (logo, back button) would otherwise keep showing us online, and keep a
+    // host's role from ever being handed over. A fresh connection detaches it.
+    if (!socket.connected) return;
+    socket.disconnect();
+    socket.connect();
+  },
 };

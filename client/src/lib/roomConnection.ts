@@ -44,6 +44,8 @@ export class RoomConnection {
   private meId: string | null = null;
   private latest: PublicRoom | null = null;
   private joinAcked = false;
+  /** A join went out on the current connection, so the server may have attached this socket. */
+  private joinSent = false;
   private freshSnapshot = false;
   private retryTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -71,11 +73,18 @@ export class RoomConnection {
     if (this.transport.isConnected()) void this.enter();
   }
 
+  /** Called when the room page goes away. If we had joined, the server must see us leave too. */
   stop(): void {
     for (const unsubscribe of this.unsubscribe) unsubscribe();
     this.unsubscribe = [];
     this.generation += 1;
     clearTimeout(this.retryTimer);
+    // Even an unanswered join may have attached this socket on the server.
+    if (this.joinSent) {
+      this.joinSent = false;
+      this.joinAcked = false;
+      this.transport.release();
+    }
   }
 
   /** Joins as a new participant from the invite screen. Resolves to an error, or null on success. */
@@ -83,6 +92,7 @@ export class RoomConnection {
     if (!this.transport.isConnected()) return 'CONNECTION';
     const generation = this.generation;
     try {
+      this.joinSent = true;
       const reply = await this.transport.request('room:join', { code: this.code, name });
       if (!reply.ok) {
         if (reply.error === 'ROOM_NOT_FOUND' && generation === this.generation) this.close();
@@ -119,6 +129,8 @@ export class RoomConnection {
   async leave(): Promise<ActionResult> {
     const result = await this.act('room:leave');
     if (result.ok) {
+      // The server already detached every socket of ours: nothing left to release.
+      this.joinSent = false;
       this.sessions.forget(this.code);
       this.meId = null;
     }
@@ -133,6 +145,7 @@ export class RoomConnection {
   private readonly handleDisconnect = () => {
     this.generation += 1;
     this.joinAcked = false;
+    this.joinSent = false;
     this.freshSnapshot = false;
     clearTimeout(this.retryTimer);
     this.update({ connected: false, ready: false });
@@ -158,6 +171,7 @@ export class RoomConnection {
       let removed = false;
       const stored = this.sessions.get(this.code);
       if (stored) {
+        this.joinSent = true;
         const reply = await this.transport.request('room:join', { code: this.code, token: stored.token });
         if (!isCurrent()) return;
         if (reply.ok) {
@@ -200,6 +214,7 @@ export class RoomConnection {
 
   /** The room is gone for good (expired, closed or never existed). */
   private close(): void {
+    this.joinSent = false;
     this.sessions.forget(this.code);
     this.meId = null;
     this.latest = null;

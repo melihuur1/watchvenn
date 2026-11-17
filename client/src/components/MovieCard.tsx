@@ -7,12 +7,13 @@ import { movieMeta } from '../lib/format';
 type Size = 'deck' | 'hero' | 'tile' | 'banner' | 'strip';
 
 const SIZES: Record<Size, { root: string; title: string; genres: number }> = {
-  deck: { root: 'rounded-[2rem] p-6 sm:p-8', title: 'text-[2.15rem] sm:text-5xl', genres: 3 },
-  hero: { root: 'rounded-[1.6rem] p-4', title: 'text-2xl', genres: 1 },
-  tile: { root: 'rounded-2xl p-3', title: 'text-[17px]', genres: 1 },
+  deck: { root: 'rounded-[2rem] p-6 sm:p-8', title: 'text-[2.15rem] sm:text-5xl line-clamp-5', genres: 3 },
+  hero: { root: 'rounded-[1.6rem] p-4', title: 'text-2xl line-clamp-3', genres: 1 },
+  // Long custom titles (up to 60 characters) must not push the card's text out of its frame.
+  tile: { root: 'rounded-2xl p-3', title: 'text-[17px] line-clamp-4', genres: 1 },
   /** Square-cornered, for the top of a results card. */
-  banner: { root: 'p-5 sm:p-7', title: 'text-[2rem] sm:text-5xl', genres: 2 },
-  strip: { root: 'p-4', title: 'text-2xl', genres: 1 },
+  banner: { root: 'p-5 sm:p-7', title: 'text-[2rem] sm:text-5xl line-clamp-4', genres: 2 },
+  strip: { root: 'p-4', title: 'text-2xl line-clamp-3', genres: 1 },
 };
 
 export function gradient(movie: Movie, angle = 155): string {
@@ -60,7 +61,7 @@ export function MovieCard({
       </div>
 
       <div className="mt-6">
-        <h3 className={`font-black leading-[0.98] tracking-tight text-balance [overflow-wrap:anywhere] ${s.title}`}>
+        <h3 title={movie.title} className={`font-black leading-[0.98] tracking-tight text-balance [overflow-wrap:anywhere] ${s.title}`}>
           {movie.title}
         </h3>
         {showOriginal && (

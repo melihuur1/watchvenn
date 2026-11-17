@@ -83,7 +83,7 @@ export function BallotReview({
         {hostControls}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/[0.07] bg-ink-950/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/[0.07] bg-ink-950/80 pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] backdrop-blur-xl">
         <div className="mx-auto max-w-2xl px-4 py-3">
           {note && (
             <p className="mb-2 text-center text-xs font-medium text-amber-200/90" role="status">

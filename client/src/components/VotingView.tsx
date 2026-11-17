@@ -34,7 +34,7 @@ function WaitingPanel({ room, meId, isHost, ready, run }: RoomViewProps) {
         <h1 className="mt-4 text-3xl font-black tracking-tight">{spectating ? 'Bu turu izliyorsun' : 'Oyun alındı'}</h1>
         <p className="mt-2 max-w-md text-stone-400">
           {spectating
-            ? 'Oylama başladığında listede değildin. Sonuçları burada göreceksin; sonraki turda sen de oy verirsin.'
+            ? 'Oylama başlarken odaya bağlı değildin. Sonuçları burada göreceksin; sonraki turda sen de oy verirsin.'
             : 'Diğerlerini bekliyoruz. Herkes oyunu verince sonuçlar kendiliğinden açılacak.'}
         </p>
       </div>

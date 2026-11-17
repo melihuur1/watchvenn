@@ -29,6 +29,11 @@ class FakeTransport implements Transport {
       this.requests.push({ event, payload: args[0], resolve, reject });
     })) as unknown as Requester;
 
+  releases = 0;
+  release = () => {
+    this.releases += 1;
+  };
+
   connect() {
     this.connected = true;
     for (const listener of this.connectListeners) listener();
@@ -275,6 +280,33 @@ describe('RoomConnection', () => {
 
     expect(connection.getState()).toMatchObject({ view: { kind: 'loading' }, ready: false });
     expect(transport.requests).toEqual([]);
+  });
+
+  it('releases its presence when stopped after joining, so the room sees it go', async () => {
+    const { transport, connection } = await setup();
+    await rejoin(transport);
+
+    connection.stop();
+    expect(transport.releases).toBe(1);
+  });
+
+  it('also releases when stopped while a rejoin is still unanswered', async () => {
+    const { transport, connection } = await setup();
+    expect(transport.pending('room:join')).toHaveLength(1);
+
+    connection.stop();
+    expect(transport.releases).toBe(1);
+  });
+
+  it('does not touch the connection when no join was ever sent', async () => {
+    const offline = await setup({ connected: false });
+    offline.connection.stop();
+    expect(offline.transport.releases).toBe(0);
+
+    const invited = await setup({ stored: false });
+    await invited.transport.answer('room:peek', { ok: true, hostName: 'Ayşe', phase: 'lobby', participantCount: 1 });
+    invited.connection.stop();
+    expect(invited.transport.releases).toBe(0);
   });
 
   it('forgets the session after leaving', async () => {

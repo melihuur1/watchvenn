@@ -88,7 +88,7 @@ function Podium({ results }: { results: Results }) {
         </div>
       )}
 
-      {results.top.length < 3 && (
+      {results.top.length < 3 && results.breakdown.some((r) => r.eliminated) && (
         <p className="flex gap-2.5 px-1 text-sm text-stone-400">
           <Icon name="info" className="mt-px size-4 shrink-0" />
           Sadece {results.top.length} film hiç veto almadı; diğerleri en az bir vetoyla elendi.

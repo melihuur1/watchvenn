@@ -156,7 +156,7 @@ export function VoteDeck({ room, isHost, ready, run, connection }: RoomViewProps
           tabIndex={-1}
           aria-roledescription="film kartı"
           aria-label={`${draft.position + 1}. film, toplam ${total}: ${current.title}`}
-          className="absolute inset-0 animate-card-in rounded-[2rem] outline-none"
+          className="absolute inset-0 animate-card-in rounded-[2rem] outline-none select-none"
         >
           <MovieCard movie={current} size="deck" className="h-full" />
         </div>

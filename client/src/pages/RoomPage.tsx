@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { parseRoomCode } from '@shared/text';
 import type { Phase, PublicRoom } from '@shared/types';
 import { ConnectionBanner } from '../components/ConnectionBanner';
@@ -65,10 +65,21 @@ function RoomShell({ room, meId, ready, connection }: { room: PublicRoom; meId: 
     setReveal(shownPhase === 'voting' && room.phase === 'results');
   }
 
+  // A new phase is a new screen: start it from the top, and if the control that had focus
+  // disappeared with the old screen, hand focus to the new one instead of the page body.
+  const main = useRef<HTMLElement>(null);
+  const phaseOnMount = useRef(room.phase);
+  useEffect(() => {
+    if (phaseOnMount.current === room.phase) return;
+    phaseOnMount.current = room.phase;
+    window.scrollTo(0, 0);
+    if (!document.activeElement || document.activeElement === document.body) main.current?.focus({ preventScroll: true });
+  }, [room.phase]);
+
   return (
     <div className="flex min-h-dvh flex-col">
       <RoomHeader room={room} meId={meId} ready={ready} connection={connection} />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-5 pb-32 sm:px-6">
+      <main ref={main} tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 pt-5 pb-32 outline-none sm:px-6">
         {room.phase === 'lobby' && <LobbyView {...props} />}
         {room.phase === 'voting' && <VotingView {...props} />}
         {room.phase === 'results' && <ResultsView key={room.round} {...props} reveal={reveal} />}

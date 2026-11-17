@@ -27,7 +27,7 @@ export function ResultsActions({
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/[0.07] bg-ink-950/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
+    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/[0.07] bg-ink-950/80 pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] backdrop-blur-xl">
       <div className="mx-auto flex min-h-20 max-w-3xl items-center gap-3 px-4 py-3">
         {isHost ? (
           <>
